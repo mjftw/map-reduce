@@ -21,8 +21,8 @@ defmodule MapReduceTest do
     {"l", [2]}
     """
     @impl MapReduce
-    def reduce(key, values) do
-      {key, [Enum.reduce(values, 0, fn count, total -> total + count end)]}
+    def reduce(char, counts) do
+      {char, [Enum.reduce(counts, &+/2)]}
     end
   end
 

@@ -29,8 +29,33 @@ defmodule MapReduce do
   TODO: Switch to a distributed architecture rather than this simple naive sequential approach
   """
   @spec run(module(), input_map()) :: output_map()
-  def run(implementation, data) do
-    intermediate = Enum.map(data, fn {key, value} -> implementation.map(key, value) end)
-    # TODO: Finish naive implementation
+  def run(implementation, input) do
+    input
+    |> Enum.map(fn {key, value} -> implementation.map(key, value) end)
+    |> collect
+    |> Enum.map(fn {key, values} -> implementation.reduce(key, values) end)
+  end
+
+  @doc """
+  iex> MapReduce.collect([[{:a, 1}, {:b, 2}], [{:b, 5}, {:c, 6}, {:d, 0}], [{:a, 3}]])
+  %{a: [3, 1], b: [5, 2], c: [6], d: [0]}
+  """
+  @spec collect([intermediate_map()]) :: %{output_key() => [intermediate_value()]}
+  def collect(inter_maps) do
+    inter_maps
+    |> Stream.flat_map(fn x -> x end)
+    |> Enum.reduce(
+      %{},
+      fn {out_key, inter_value}, acc ->
+        Map.update(
+          acc,
+          out_key,
+          [inter_value],
+          fn acc ->
+            [inter_value | acc]
+          end
+        )
+      end
+    )
   end
 end

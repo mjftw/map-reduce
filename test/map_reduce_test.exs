@@ -2,10 +2,6 @@ defmodule MapReduceTest do
   use ExUnit.Case
   doctest MapReduce
 
-  test "passes" do
-    assert true
-  end
-
   defmodule MapReduceLetterCount do
     @behaviour MapReduce
 

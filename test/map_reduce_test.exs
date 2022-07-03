@@ -22,7 +22,7 @@ defmodule MapReduceTest do
     """
     @impl MapReduce
     def reduce(char, counts) do
-      {char, [Enum.reduce(counts, &+/2)]}
+      {char, [Enum.sum(counts)]}
     end
   end
 
